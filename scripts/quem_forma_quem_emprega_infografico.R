@@ -9,68 +9,70 @@ library(gt)
 ####
 # INEP ----
 
-inep_limpo <- read_excel("inep/banco_de_dados/EDUCACAO_PROFISSIONAL_2015_2022_limpo.xlsx") # Banco Uniep
+# Da linha 14 a linha 81 estao os codigos para manipular os dados.
 
-colnames(inep_limpo) <- tolower(colnames(inep_limpo)) # Por os nomes das varieis em letras minusculas
-
-####
-## Identificacao cursos saude ----
-
-# Abrindo o banco
-
-bd_tecnicos_saude <- read_excel("inep/banco_de_dados/cursos_tecnicos_saude.xlsx") |> 
-  mutate(tecnico_saude = 1)
-
-# Juntando os bancos
-
-inep_limpo <- left_join(
-  inep_limpo,
-  bd_tecnicos_saude,
-  by = join_by(no_curso_educacao_profissional)) 
-
-# Fazendo variavel
-
-inep_limpo <- inep_limpo |> 
-  mutate(tecnico_saude = ifelse(is.na(tecnico_saude), 0, 1))
-
-# Pondo alguns tecnicos que nao estavam vindo
-
-inep_limpo$tecnico_saude <- ifelse(inep_limpo$no_curso_educacao_profissional %in%
-                                     c("Análises Clínicas", "Outros - Eixo Ambiente e Saúde", "Dependência química"), 1, 
-                                   inep_limpo$tecnico_saude)
-# Salvando o banco
-
-# save(inep_limpo,
-#       file = "inep/banco_de_dados/inep_limpo.Rda") # Salvar em Rda
-
-
-####
-## Nome dos cursos ----
-
-nome_cursos_tecnicos_inep <- as.data.frame(table(inep_limpo$no_curso_educacao_profissional)) |> 
-  rename(nome_curso_tecnicos_15_22= Var1) |> 
-  mutate(Freq = NULL)
-
-# write.csv(
-#   nome_cursos_tecnicos_inep,
-#   "~/trabalho_profissionais/inep/resultados/nome_cursos_tecnicos_inep.csv",
-#   row.names = FALSE,  # Evita a inclusão das linhas de contagem
-#   fileEncoding = "latin1")
-
-
-####
-## Controle Outros - Eixo Ambiente e Saúde ----
-
-eixo_saude_ambiente <- inep_limpo |> 
-  filter(no_curso_educacao_profissional == "Outros - Eixo Ambiente e Saúde") |> 
-  select (nu_ano_censo,
-          nome_escola,
-          no_regiao, 
-          no_uf,
-          rede,
-          dependencia_administrativa, 
-          no_area_curso_profissional,
-          no_curso_educacao_profissional)
+# inep_limpo <- read_excel("inep/banco_de_dados/EDUCACAO_PROFISSIONAL_2015_2022_limpo.xlsx") # Banco Uniep
+# 
+# colnames(inep_limpo) <- tolower(colnames(inep_limpo)) # Por os nomes das varieis em letras minusculas
+# 
+# 
+# ## Identificacao cursos saude 
+# 
+# # Abrindo o banco
+# 
+# bd_tecnicos_saude <- read_excel("inep/banco_de_dados/cursos_tecnicos_saude.xlsx") |> 
+#   mutate(tecnico_saude = 1)
+# 
+# # Juntando os bancos
+# 
+# inep_limpo <- left_join(
+#   inep_limpo,
+#   bd_tecnicos_saude,
+#   by = join_by(no_curso_educacao_profissional)) 
+# 
+# # Fazendo variavel
+# 
+# inep_limpo <- inep_limpo |> 
+#   mutate(tecnico_saude = ifelse(is.na(tecnico_saude), 0, 1))
+# 
+# # Pondo alguns tecnicos que nao estavam vindo
+# 
+# inep_limpo$tecnico_saude <- ifelse(inep_limpo$no_curso_educacao_profissional %in%
+#                                      c("Análises Clínicas", "Outros - Eixo Ambiente e Saúde", "Dependência química"), 1, 
+#                                    inep_limpo$tecnico_saude)
+# # Salvando o banco
+# 
+# # save(inep_limpo,
+# #       file = "inep/banco_de_dados/inep_limpo.Rda") # Salvar em Rda
+# 
+# 
+# 
+# ## Nome dos cursos 
+# 
+# nome_cursos_tecnicos_inep <- as.data.frame(table(inep_limpo$no_curso_educacao_profissional)) |> 
+#   rename(nome_curso_tecnicos_15_22= Var1) |> 
+#   mutate(Freq = NULL)
+# 
+# # write.csv(
+# #   nome_cursos_tecnicos_inep,
+# #   "~/trabalho_profissionais/inep/resultados/nome_cursos_tecnicos_inep.csv",
+# #   row.names = FALSE,  # Evita a inclusão das linhas de contagem
+# #   fileEncoding = "latin1")
+# 
+# 
+#
+# ## Controle Outros - Eixo Ambiente e Saúde 
+# 
+# eixo_saude_ambiente <- inep_limpo |> 
+#   filter(no_curso_educacao_profissional == "Outros - Eixo Ambiente e Saúde") |> 
+#   select (nu_ano_censo,
+#           nome_escola,
+#           no_regiao, 
+#           no_uf,
+#           rede,
+#           dependencia_administrativa, 
+#           no_area_curso_profissional,
+#           no_curso_educacao_profissional)
 
 # write.csv(
 #   eixo_saude_ambiente,
